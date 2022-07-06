@@ -19,6 +19,9 @@ namespace Oortonaut {
             foreach(Assembly a in AppDomain.CurrentDomain.GetAssemblies())
                 foreach(var ci in GetAssemblyPluginInterfaces(a))
                     constructors.Add(ci.type.Name, ci.ci);
+            if (!constructors.Any()) {
+                errors.Add($"No plugins found.");
+            }
         }
         // Often, you'll have the types saved in a file or just hardcoded. Use the Create method and
         // the argument values to create the object.
@@ -28,8 +31,8 @@ namespace Oortonaut {
         //      if (result != null) world.Add(result);
         public Interface? Create(string typeName, params object[] args) {
             constructors.TryGetValue(typeName, out ConstructorInfo? ci);
-            if (ci == null) errors.Add($"Create: failed to find {typeName}");
-            return ( Interface? ) (ci?.Invoke(null, args) ?? null);
+            if(ci == null) errors.Add($"Create: failed to find {typeName}");
+            return ( Interface? ) (ci?.Invoke(args) ?? null);
         }
         // This is if you want a list of the loaded plugins for an editor or something.
         public IEnumerable<string> Plugins => constructors.Where(kv => null != kv.Value).Select(kv => kv.Key);
@@ -102,14 +105,25 @@ namespace Oortonaut {
                 result &= plugh == null;
                 int i = 0;
                 foreach(var plugin in factory.Plugins) {
-                    var pi = factory.Create(plugin, plugin + " instance", i++);
+                    string instanceName = plugin + " instance";
+                    var pi = factory.Create(plugin, instanceName, i++);
                     result &= pi != null;
                 }
                 result &= factory.Plugins.Count() > 0;
                 var q = factory.TakeErrors().ToList();
-                result &= q.Count == 0;
+                result &= q.Count == 1;
+                if(!result) {
+                    Console.WriteLine($"Reported Errors:");
+                    foreach(var err in q) {
+                        Console.WriteLine(err);
+                    }
+                    result = false;
+                }
                 return result;
-            } catch { return false; }
+            } catch {
+                Console.WriteLine("Exception");
+                return false; 
+            }
         }
     }
     #endregion
