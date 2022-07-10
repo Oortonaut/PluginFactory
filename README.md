@@ -8,8 +8,11 @@ to create objects.
 
 # Building
 
-Put it in your project. You can delete the Test class if you'd like
-40 lines back.
+Option 1: Just include PluginFactory.cs in your project. Change the namespace!
+Make it yours and enjoy!
+
+Option 2: Link in the PluginFactory library by adding a dependency to your project
+or the compiled DLL (I think?).
 
 # Usage
 
@@ -41,3 +44,16 @@ This was unclear to a reddit commentator, and to be fair, it is
 extremely slow if you create a new factory for every new object.
 
 Use Assembly.Load() to activate plugins before creating the factory.
+
+# Performance
+
+On an i5-5670K, underclocked, the benchmark shows an overhead of ~26ns. This was a
+best case; usually it runs 30-31ns.
+
+Factory = 25.8ns, Alloc = 8.5ns, Total = 34.3ns
+YAY :)
+
+We can of course naively reciprocate this to get a real big number - about 
+38 million in this case. If you are creating that many objects, hell, good for
+you, but I never will, at least from a plugin. So there's that.
+

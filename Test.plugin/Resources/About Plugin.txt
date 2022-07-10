@@ -1,0 +1,6 @@
+This file shows how to embed a text file resource into your project.
+
+The contents of the text file can be had with `plugin[fileName]`.
+
+
+

@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageLicenseFile>..\LICENSE</PackageLicenseFile>
+    <Authors>Oortonaut</Authors>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <BaseOutputPath></BaseOutputPath>
+    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
+    <ApplicationIcon>Resources\Plugin Icon.ico</ApplicationIcon>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <Description>A plugin used to test the functionality of the PluginFactory library.</Description>
+    <Copyright>The Unlicense - see LICENSE in this package.</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Plugin Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Test">
+      <HintPath>..\Test\bin\Release\net6.0\Test.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="@echo off&#xD;&#xA;set PluginDir=$(ProjectDir)..\Test\plugins\&#xD;&#xA;if not exist %25PluginDir%25 mkdir %25PluginDir%25&#xD;&#xA;echo Copying $(TargetFile) to plugin directory %25PluginDir%25&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).dll&quot; %25PluginDir%25 /y&#xD;&#xA;" />
+  </Target>
+
+</Project>
